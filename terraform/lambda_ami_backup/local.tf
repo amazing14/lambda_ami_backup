@@ -1,6 +1,6 @@
 locals {
-  module_dir      = "../../modules"
+  module_dir = "../../modules"
   aws = {
-    region        = "ap-northeast-2"
+    region = "us-east-1"
   }
 }

@@ -1,3 +1,3 @@
-data "aws_kms_alias" "lambda" {
-  name = "alias/aws/lambda"
+data "aws_kms_key" "lambda" {
+  key_id = "alias/aws/lambda"
 }

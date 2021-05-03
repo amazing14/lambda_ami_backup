@@ -5,14 +5,15 @@ from datetime import datetime
 import boto3
 
 TAG_KEY = os.environ.get('TAG_KEY', 'Backup')
-TAG_VALUE = os.environ.get('TAG_VALUE', 'by_lambda')
+TAG_VALUE = os.environ.get('TAG_VALUE', 'by_ami_automation')
 MAX_RESERVED_COUNT = int(os.environ.get('MAX_RESERVED_COUNT', 5))
+REGION = os.environ.get('AWS_REGION', 'us-east-1')
 
 
 class Image:
     def __init__(self):
-        self.ec2_client = boto3.client('ec2', 'ap-northeast-2')
-        self.ec2_res = boto3.resource('ec2', 'ap-northeast-2')
+        self.ec2_client = boto3.client('ec2', region_name=REGION)
+        self.ec2_res = boto3.resource('ec2', region_name=REGION)
         self.amis: list = []
         self.amis_to_delete: dict = {}
 

@@ -3,7 +3,7 @@ This project using `Terraform` to help you deploy a AWS `Lambda` function with `
 
 ![simple darchitecture](./img/simple-architecture.png)
 
-If your EC2 has a tag key `Backup` and value `by_lambda`, then it'll be backup AMI by lambda.
+If your EC2 has a tag key `Backup` and value `by_ami_automation`, then it'll be backup AMI by lambda.
 
 **EC2 Tag Example**
 ![example](./img/ec2_capture.png)
@@ -28,6 +28,7 @@ $ ./build.py
 
 $ cd terraform/lambda_ami_backup
 
+$ terraform init
 $ terraform plan
 $ terraform apply 
 ```
@@ -54,7 +55,7 @@ variable "ec2_tag_key_env_var" {
 
 variable "ec2_tag_value_env_var" {
     description = "The EC2's tag value that lambda looking up."
-    default = "by_lambda"
+    default = "by_ami_automation"
 }
 
 variable "schedule_exp" {
@@ -67,3 +68,6 @@ variable "max_images" {
     default = 5
 }
 ```
+
+cron details: https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html
+corn schedule generator: http://www.cronmaker.com/

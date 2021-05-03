@@ -1,11 +1,12 @@
 import itertools
-
+import os
 import boto3
 
+REGION = os.environ.get('AWS_REGION', 'us-east-1')
 
 class EC2:
     def __init__(self):
-        self.ec2_client = boto3.client('ec2', 'ap-northeast-2')
+        self.ec2_client = boto3.client('ec2', region_name=REGION)
         self.reservations = None
 
     def __get_id_and_name(self, instance):
