@@ -26,17 +26,6 @@ $ terraform apply
 ```
 
 ## Configuration
-Default `aws region` can be modified on `terraform/labmda_ami_backup/local.tf`.
-
-```text
-locals {
-  module_dir      = "../../modules"
-  aws = {
-    region        = "ap-northeast-2"
-  }
-}
-```
-
 If you want to customize, see `terraform/lambda_ami_backup/variables.tf` file.
 
 ```text
@@ -71,4 +60,5 @@ variable "aws_region" {
 ```
 
 cron details: https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html
+
 corn schedule generator: http://www.cronmaker.com/
