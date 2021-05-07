@@ -5,7 +5,7 @@ variable "ec2_tag_key_env_var" {
 
 variable "ec2_tag_value_env_var" {
   description = "The EC2's tag value that lambda looking up."
-  default     = "yes"
+  default     = "ec2_ami_automation"
 }
 
 variable "schedule_exp_ami_create" {

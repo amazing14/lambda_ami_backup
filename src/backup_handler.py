@@ -7,7 +7,7 @@ from image import Image
 class EC2:
     def __init__(self):
         self.tag_key = os.environ.get('TAG_KEY', 'Backup')
-        self.tag_value = os.environ.get('TAG_VALUE', 'by_ami_automation')
+        self.tag_value = os.environ.get('TAG_VALUE', 'ec2_ami_automation')
         self.region = os.environ.get('AWS_REGION', 'us-east-1')
         self.ec2_client = boto3.client('ec2', region_name=self.region)
         self.reservations = None

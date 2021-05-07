@@ -3,18 +3,10 @@ This project using `Terraform` to help you deploy a AWS `Lambda` function with `
 
 ![simple darchitecture](./img/simple-architecture.png)
 
-If your EC2 has a tag key `Backup` and value `by_ami_automation`, then it'll be backup AMI by lambda.
+If your EC2 has a tag key `Backup` and value `ec2_ami_automation`, then it'll be backup AMI by lambda.
 
 **EC2 Tag Example**
 ![example](./img/ec2_capture.png)
-
-# Updated
-* 2019-06-24
-  * Delete old AMIs, if existing AMIs are exceeded reserved count. (default = 5)
-  * Bugfix - Environment variables injection didn't work properly.
-* 2019-06-20 
-  * KMS lambda target arn is loaded automatically.
-  * Bugfix
 
 ## Prerequisites
 * terraform installed (version >= 0.12.1)
