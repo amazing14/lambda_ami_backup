@@ -10,7 +10,7 @@ class Image:
         self.tag_key = os.environ.get('TAG_KEY', 'Backup')
         self.tag_value = os.environ.get('TAG_VALUE', 'ec2_ami_automation')
         self.region = os.environ.get('AWS_REGION', 'us-east-1')
-        self.max_reserved_count = int(os.environ.get('MAX_RESERVED_COUNT', 1))
+        self.max_reserved_count = int(os.environ.get('MAX_RESERVED_COUNT', 5))
 
         self.ec2_client = boto3.client('ec2', region_name=self.region)
         self.ec2_res = boto3.resource('ec2', region_name=self.region)

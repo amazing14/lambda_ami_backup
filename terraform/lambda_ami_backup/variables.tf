@@ -19,7 +19,7 @@ variable "schedule_exp_ami_delete" {
 
 variable "max_images" {
   description = "The maximun count of backup images"
-  default     = 1
+  default     = 5
 }
 
 variable "aws_region" {
