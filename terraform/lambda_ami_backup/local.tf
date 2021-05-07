@@ -1,6 +1,6 @@
 locals {
   module_dir = "../../modules"
   aws = {
-    region = "us-east-1"
+    region = var.aws_region
   }
 }

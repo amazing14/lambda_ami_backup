@@ -4,27 +4,27 @@ from datetime import datetime
 
 import boto3
 
-TAG_KEY = os.environ.get('TAG_KEY', 'Backup')
-TAG_VALUE = os.environ.get('TAG_VALUE', 'by_ami_automation')
-MAX_RESERVED_COUNT = int(os.environ.get('MAX_RESERVED_COUNT', 5))
-REGION = os.environ.get('AWS_REGION', 'us-east-1')
-
 
 class Image:
     def __init__(self):
-        self.ec2_client = boto3.client('ec2', region_name=REGION)
-        self.ec2_res = boto3.resource('ec2', region_name=REGION)
+        self.tag_key = os.environ.get('TAG_KEY', 'Backup')
+        self.tag_value = os.environ.get('TAG_VALUE', 'by_ami_automation')
+        self.region = os.environ.get('AWS_REGION', 'us-east-1')
+        self.max_reserved_count = int(os.environ.get('MAX_RESERVED_COUNT', 1))
+
+        self.ec2_client = boto3.client('ec2', region_name=self.region)
+        self.ec2_res = boto3.resource('ec2', region_name=self.region)
         self.amis: list = []
         self.amis_to_delete: dict = {}
 
     def bake(self, ec2_id: str, name: str) -> None:
         now = datetime.now().strftime("%Y-%m-%dT%H-%M")
-        image_name = f'auto_backup_{name}_{now}'
+        image_name = f'ec2_ami_auto_backup_{name}_{now}'
 
         ami: dict = self.ec2_client.create_image(
             NoReboot=True,
             Name=image_name,
-            Description=f'Instance {name} - automated daily AMI backup by lambda.',
+            Description=f'Instance {name} - automated daily AMI backup by ec2 ami automation.',
             InstanceId=ec2_id
         )
 
@@ -34,37 +34,38 @@ class Image:
             image.create_tags(
                 Tags=[
                     {'Key': 'Name', 'Value': image_name},
-                    {'Key': TAG_KEY, 'Value': TAG_VALUE},
+                    {'Key': self.tag_key, 'Value': self.tag_value},
                     {'Key': 'Image_group', 'Value': name},
                 ]
             )
 
-        print(f'created: {ami.get("ImageId", "")}')
+        print('AMI:{} created from Instace: {}'.format(ami.get("ImageId", ""), ec2_id))
 
-    def filter(self) -> 'Image':
+    def filter_images(self):
         filters = [
             {
-                'Name': f'tag:{TAG_KEY}', 'Values': [TAG_VALUE]
+                'Name': f'tag:{self.tag_key}', 'Values': [self.tag_value]
             }
         ]
         filtered_amis = self.ec2_client.describe_images(Filters=filters)
         self.amis = filtered_amis.get('Images', '')
-        return self
 
     def delete_amis(self):
+        self.filter_images()
         self.__get_ami_group_by_tag_name()
 
         for group_name, images in self.amis_to_delete.items():
-            if (len(images)) > MAX_RESERVED_COUNT:
+            if (len(images)) > self.max_reserved_count:
                 images.sort(key=operator.itemgetter('CreationDate'), reverse=True)
-                images_to_delete = images[MAX_RESERVED_COUNT:]
+                images_to_delete = images[self.max_reserved_count:]
+                print("AMIs to be deleted: {}".format(images_to_delete))
                 self.__delete_amis(images_to_delete)
 
     def __delete_amis(self, images_to_delete):
         for img in images_to_delete:
             image_id = img['ImageId']
-            print(f'This {image_id} is deleted.')
             self.ec2_client.deregister_image(ImageId=image_id)
+            print('AMI: {} is deleted.'.format(image_id))
 
     def __get_ami_group_by_tag_name(self):
         for img in self.amis:

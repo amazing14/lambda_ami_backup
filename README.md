@@ -23,7 +23,7 @@ If your EC2 has a tag key `Backup` and value `by_ami_automation`, then it'll be 
 ## Deployment guide
 ```bash
 # Archive your python code.
-$ ./build.py
+$ ./build.sh
 
 
 $ cd terraform/lambda_ami_backup
@@ -49,23 +49,32 @@ If you want to customize, see `terraform/lambda_ami_backup/variables.tf` file.
 
 ```text
 variable "ec2_tag_key_env_var" {
-    description = "The EC2's tag key that lambda looking up."
-    default = "Backup"
-}   
-
-variable "ec2_tag_value_env_var" {
-    description = "The EC2's tag value that lambda looking up."
-    default = "by_ami_automation"
+  description = "The EC2's tag key that lambda looking up."
+  default     = "Backup"
 }
 
-variable "schedule_exp" {
-    description = "The cloudwatch event schedule expression."
-    default = "cron(0 18 * * ? *)"
+variable "ec2_tag_value_env_var" {
+  description = "The EC2's tag value that lambda looking up."
+  default     = "yes"
+}
+
+variable "schedule_exp_ami_create" {
+  description = "The cloudwatch event schedule expression to trigger ami create lambda function at 6PM daily"
+  default     = "cron(0 18 * * ? *)"
+}
+variable "schedule_exp_ami_delete" {
+  description = "The cloudwatch event schedule expression to trigger ami delete lambda function at 7PM daily"
+  default     = "cron(0 19 * * ? *)"
 }
 
 variable "max_images" {
-    description = "The maximun count of backup images"
-    default = 5
+  description = "The maximun count of backup images"
+  default     = 1
+}
+
+variable "aws_region" {
+  description = "AWS region to deploy the ec2 AMI automation stack"
+  default     = "us-east-1"
 }
 ```
 

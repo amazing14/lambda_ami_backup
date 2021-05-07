@@ -18,9 +18,3 @@ resource "aws_iam_role_policy" "ami_backup_lambda_ami_backup" {
   role                =   aws_iam_role.iam_for_lambda.name
   policy              =   file("${path.module}/iam_policy_lambda_create_delete_ami.json")
 }
-
-resource "aws_iam_role_policy" "kms_key_value_read" {
-  name                =   "kms_key_value_read"
-  policy              =   file("${path.module}/iam_policy_lambda_kms.json")
-  role                =   aws_iam_role.iam_for_lambda.id
-}
