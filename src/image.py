@@ -58,14 +58,33 @@ class Image:
             if (len(images)) > self.max_reserved_count:
                 images.sort(key=operator.itemgetter('CreationDate'), reverse=True)
                 images_to_delete = images[self.max_reserved_count:]
-                print("AMIs to be deleted: {}".format(images_to_delete))
+                print("AMIs to be deregistered: {}".format(images_to_delete))
                 self.__delete_amis(images_to_delete)
+
+    # Get snapshots associated with the images
+    def __get_snapshot_ids(self, image_id):
+        ImageDetails = self.ec2_client.describe_images(DryRun=False, ImageIds=[image_id])
+        DeviceMappings = ImageDetails['Images'][0]['BlockDeviceMappings']
+        SnapshotIds = []
+        for device in DeviceMappings:
+            if "Ebs" not in device:  # Skip if the device is not an EBS volume
+                continue
+            SnapshotIds.append(device['Ebs']['SnapshotId'])
+        return SnapshotIds
+
+    # Delete snapshots associated with the images
+    def __delete_snapshots(self, image_id, snapshot_ids):
+        for SnapshotId in snapshot_ids:
+            self.ec2_client.delete_snapshot(DryRun=False, SnapshotId=SnapshotId)
+            print("Snapshot with id : {} of the ami: {} is DELETED".format(SnapshotId, image_id))
 
     def __delete_amis(self, images_to_delete):
         for img in images_to_delete:
             image_id = img['ImageId']
+            snapshot_ids = self.__get_snapshot_ids(image_id=image_id)
             self.ec2_client.deregister_image(ImageId=image_id)
-            print('AMI: {} is deleted.'.format(image_id))
+            print('AMI: {} is deregistered. Deleting the snapshots...'.format(image_id))
+            self.__delete_snapshots(image_id=image_id, snapshot_ids=snapshot_ids)
 
     def __get_ami_group_by_tag_name(self):
         for img in self.amis:

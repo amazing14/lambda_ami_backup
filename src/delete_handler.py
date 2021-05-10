@@ -14,6 +14,6 @@ def lambda_handler(event, context):
         'body': 'Delete AMI requested.'
     }
 
-# local testing
+# ### local testing
 # if __name__ == "__main__":
 #     lambda_handler("event", "context")

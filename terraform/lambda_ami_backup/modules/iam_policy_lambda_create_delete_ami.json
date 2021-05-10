@@ -6,7 +6,10 @@
       "Action": [
         "ec2:CreateTags",
         "ec2:CreateImage",
-        "ec2:DeregisterImage"
+        "ec2:DeregisterImage",
+        "ec2:DescribeInstances",
+        "ec2:DeleteSnapshot",
+        "ec2:DescribeImages"
       ],
       "Resource": "*"
     }
